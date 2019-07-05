@@ -1,0 +1,20 @@
+{
+    "name": "fardus/lftp",
+    "description": "A handler for Monolog that optimizes log messages to be processed by humans instead of software. Improve your productivity with logs that are easy to understand.",
+    "keywords": ["lftp", "sftp", "ftp", "server", "file"],
+    "homepage": "https://github.com/fardus/lftp",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Hamada Sidi fahari",
+            "email": "h.fahari@gmail.com"
+        }
+    ],
+    "require": {
+        "php"             : ">=5.3.0",
+        "symfony/process" : "*"
+    },
+    "autoload": {
+        "psr-4": { "Fardus\\Lftp\\": "src" }
+    }
+}
