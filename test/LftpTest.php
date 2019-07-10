@@ -22,6 +22,5 @@ class LftpTest extends TestCase
 33 octets transférés';
 
         $result = preg_replace('#^.*\n(.*)\n.*$#', '$1',$output);
-        var_dump($result);
     }
 }

@@ -82,13 +82,13 @@ class Lftp extends Connection
      * @return array
      * @throws LftpException
      */
-    public function files($pattern = null, $maxResult = null)
+    public function files($pattern = null, $maxResult = 1)
     {
         $list = array();
-        $result = $this->runCommand('ls -U ' . $pattern);
+        $output = $this->runCommand(sprintf('ls -U %s | head -%d', $pattern, $maxResult));
 
-        if(!empty($result)) {
-            $result = explode("\n", $result, $maxResult);
+        if(!empty($output)) {
+            $result = explode("\n", $output);
             foreach ($result as $item) {
                 $item = trim($item);
                 if (!empty($item)) {
