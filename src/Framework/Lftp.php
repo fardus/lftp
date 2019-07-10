@@ -15,6 +15,32 @@ use Fardus\Lftp\Exception\LftpException;
 class Lftp extends Connection
 {
     const REGEX_LS_LINE = '#(?<right>[-rwx]+) +([\d ]+ +[\d]+) +(?<size>[\d]+) (?<date>[a-zA-Z]{3}.*[\d]+) (?<file>.*)$#i';
+
+
+    /**
+     * @var string
+     */
+    protected $directory;
+
+    /**
+     * @var string
+     */
+    protected $in;
+
+    /**
+     * @param string $command
+     * @return string
+     * @throws LftpException
+     */
+    public function runCommand( $command )
+    {
+        if (!empty($this->in)) {
+            $command = sprintf('cd %s; %s', escapeshellarg($this->in), $command);
+        }
+
+        return parent::runCommand($command);
+    }
+
     /**
      * @return string
      */
@@ -34,9 +60,14 @@ class Lftp extends Connection
     }
 
     /**
-     * @var string
+     * @param string $in
+     * @return Lftp
      */
-    protected $directory;
+    public function setIn( $in )
+    {
+        $this->in = $in;
+        return $this;
+    }
 
     protected function getUrl($directory = null)
     {
@@ -74,7 +105,7 @@ class Lftp extends Connection
      * @return bool
      * @throws LftpException
      */
-    public function has( $pattern )
+    public function has( $pattern = '.')
     {
         $result = $this->runCommand('ls -alU ' . $pattern);
         return !empty($result);
@@ -98,22 +129,21 @@ class Lftp extends Connection
      */
     public function read( $file )
     {
-        $output = $this->runCommand('read '.escapeshellarg($file));
-        $output = explode("\n", $output);
-        $output = array_slice($output, -1);
-        $output = array_slice($output, 1);
-
-        return implode("\n", $output);
+        return $this->runCommand('cat '.escapeshellarg($file));
     }
 
     /**
      * @param $file
      * @return string
-     * @throws LftpException
      */
-    public function rm( $file )
+    public function rm( $file)
     {
-        $result = $this->runCommand('rm -rf '.escapeshellarg($file));
+        try {
+            $result = $this->runCommand('rm -rf ' . escapeshellarg($file));
+        } catch (LftpException $e) {
+            $result = false;
+        }
+
         return !empty($result);
     }
 

@@ -170,12 +170,11 @@ class Connection
      */
     protected function runProcess($command)
     {
-        print_r(compact('command'));
         $process = new Process($command);
         $process->run();
 
         if(!$process->isSuccessful()) {
-            throw new LftpException($process->getErrorOutput());
+            throw new LftpException(sprintf("command : %s\n error : %s", $command, $process->getErrorOutput()));
         }
 
         return $process->getOutput();
