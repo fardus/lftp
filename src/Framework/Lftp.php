@@ -82,13 +82,14 @@ class Lftp extends Connection
      * @return array
      * @throws LftpException
      */
-    public function files($pattern = null, $maxResult = null)
+    public function files($pattern = null, $maxResult = 1, $useCache = false)
     {
         $list = array();
-        $result = $this->runCommand('ls -U ' . $pattern);
+        $function = $useCache ? 'ls' : 'rels';
+        $output = $this->runCommand(sprintf('%s -U %s | head -%d', $function, $pattern, $maxResult));
 
-        if(!empty($result)) {
-            $result = explode("\n", $result, $maxResult);
+        if(!empty($output)) {
+            $result = explode("\n", $output);
             foreach ($result as $item) {
                 $item = trim($item);
                 if (!empty($item)) {
@@ -107,18 +108,20 @@ class Lftp extends Connection
      */
     public function has( $pattern = '.')
     {
-        $result = $this->runCommand('ls -alU ' . $pattern);
+        $result = $this->runCommand(sprintf('rels -alU %s', $pattern));
         return !empty($result);
     }
 
     /**
      * @param $file
+     * @param bool $delete
      * @return string
      * @throws LftpException
      */
-    public function get( $file )
+    public function get( $file, $delete = false)
     {
-        $result = $this->runCommand('get '.escapeshellarg($file));
+        $optDelete = $delete ? '-E' : null;
+        $result = $this->runCommand(sprintf('mget %s %s', $optDelete, escapeshellarg($file)));
         return !empty($result);
     }
 

@@ -1,7 +1,7 @@
 {
     "name": "fardus/lftp",
-    "description": "A handler for Monolog that optimizes log messages to be processed by humans instead of software. Improve your productivity with logs that are easy to understand.",
-    "keywords": ["lftp", "sftp", "ftp", "server", "file"],
+    "description": "lftp  is a file transfer program that allows sophisticated FTP, HTTP and other connections to other hosts. If site is specified then lftp will connect to that site otherwise a  connection has to be established with the open command.",
+    "keywords": ["lftp", "sftp", "ftp", "server", "files", "list files server"],
     "homepage": "https://github.com/fardus/lftp",
     "license": "MIT",
     "authors": [

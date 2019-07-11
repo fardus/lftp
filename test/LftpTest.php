@@ -14,14 +14,10 @@ use PHPUnit\Framework\TestCase;
  */
 class LftpTest extends TestCase
 {
-    public function testRead(  )
+    public function testLs(  )
     {
-        $output = 'cd ok, cwd=/home/fahari.hamadasidi/wrapping_chain/alfresco                             
-9c101e7cfa6815e94a666531fc0766be                                                   
-9c101e7cfa6815e94a666531fc0766be                                                   
-33 octets transférés';
+        $output = '';
 
         $result = preg_replace('#^.*\n(.*)\n.*$#', '$1',$output);
-        var_dump($result);
     }
 }
