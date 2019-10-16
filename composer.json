@@ -1,7 +1,14 @@
 {
     "name": "fardus/lftp",
     "description": "lftp  is a file transfer program that allows sophisticated FTP, HTTP and other connections to other hosts. If site is specified then lftp will connect to that site otherwise a  connection has to be established with the open command.",
-    "keywords": ["lftp", "sftp", "ftp", "server", "files", "list files server"],
+    "keywords": [
+        "lftp",
+        "sftp",
+        "ftp",
+        "server",
+        "files",
+        "list files server"
+    ],
     "homepage": "https://github.com/fardus/lftp",
     "license": "MIT",
     "authors": [
@@ -11,10 +18,12 @@
         }
     ],
     "require": {
-        "php"             : ">=5.3.0",
-        "symfony/process" : "*"
+        "php": ">=5.3.0",
+        "symfony/process": "*"
     },
     "autoload": {
-        "psr-4": { "Fardus\\Lftp\\": "src" }
+        "psr-4": {
+            "Fardus\\Lftp\\": "src"
+        }
     }
 }

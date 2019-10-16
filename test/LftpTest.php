@@ -14,10 +14,10 @@ use PHPUnit\Framework\TestCase;
  */
 class LftpTest extends TestCase
 {
-    public function testLs(  )
+    public function testLs()
     {
         $output = '';
 
-        $result = preg_replace('#^.*\n(.*)\n.*$#', '$1',$output);
+        preg_replace('#^.*\n(.*)\n.*$#', '$1', $output);
     }
 }
