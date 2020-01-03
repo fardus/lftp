@@ -151,6 +151,10 @@ class Connection
         return $this->runProcess($tmp);
     }
 
+    /**
+     * @param string $directory
+     * @return string
+     */
     protected function getUrl( $directory = '/' )
     {
         return strtr('%type%://%user%:%password%@%host%:%port%%directory%', array(
@@ -164,13 +168,13 @@ class Connection
     }
 
     /**
-     * @param $command
+     * @param string $command
      * @return string
      * @throws LftpException
      */
     protected function runProcess( $command )
     {
-        $process = new Process($command);
+        $process = new Process(array($command));
         $process->run();
 
         if (!$process->isSuccessful()) {
