@@ -174,7 +174,7 @@ class Connection
      */
     protected function runProcess( $command )
     {
-        $process = new Process(array($command));
+        $process = new Process($command);
         $process->run();
 
         if (!$process->isSuccessful()) {
