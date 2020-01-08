@@ -7,10 +7,10 @@ use Symfony\Component\Process\Process;
 
 class Connection
 {
-    const TYPE_FTP = 'ftp';
+    const TYPE_FTP  = 'ftp';
     const TYPE_FTPS = 'ftps';
-    const PORT_21 = 21;
-    const PORT_22 = 22;
+    const PORT_21   = 21;
+    const PORT_22   = 22;
 
     /**
      * @var string
@@ -105,7 +105,7 @@ class Connection
      */
     public function setPort( $port )
     {
-        $this->port = (int) $port;
+        $this->port = (int)$port;
         return $this;
     }
 
@@ -123,28 +123,16 @@ class Connection
      */
     public function setType( $type )
     {
-        $this->type = (string) $type;
+        $this->type = (string)$type;
         return $this;
     }
 
-    public function useSecureFtp($use = true)
+    public function useSecureFtp( $use = true )
     {
         if ($use) {
             $this->setPort(self::PORT_22)
                 ->setType(self::TYPE_FTPS);
         }
-    }
-
-    protected function getUrl( $directory = '/')
-    {
-        return strtr('%type%://%user%:%password%@%host%:%port%%directory%', array(
-            '%type%' => $this->type,
-            '%user%' => $this->user,
-            '%password%' => $this->password,
-            '%host%' => $this->host,
-            '%port%' => $this->port,
-            '%directory%' => $directory,
-        ));
     }
 
     /**
@@ -156,7 +144,7 @@ class Connection
     {
         $url = $this->getUrl();
         $tmp = strtr('lftp %url% -e "%command%;quit"', array(
-            '%url%' => $url,
+            '%url%'     => $url,
             '%command%' => $command,
         ));
 
@@ -164,16 +152,32 @@ class Connection
     }
 
     /**
-     * @param $command
+     * @param string $directory
+     * @return string
+     */
+    protected function getUrl( $directory = '/' )
+    {
+        return strtr('%type%://%user%:%password%@%host%:%port%%directory%', array(
+            '%type%'      => $this->type,
+            '%user%'      => $this->user,
+            '%password%'  => $this->password,
+            '%host%'      => $this->host,
+            '%port%'      => $this->port,
+            '%directory%' => $directory,
+        ));
+    }
+
+    /**
+     * @param string $command
      * @return string
      * @throws LftpException
      */
-    protected function runProcess($command)
+    protected function runProcess( $command )
     {
         $process = new Process($command);
         $process->run();
 
-        if(!$process->isSuccessful()) {
+        if (!$process->isSuccessful()) {
             throw new LftpException(sprintf("command : %s\n error : %s", $command, $process->getErrorOutput()));
         }
 
@@ -186,7 +190,7 @@ class Connection
     public function checkConnection()
     {
         try {
-            $result = (bool) $this->runProcess('lftp ' . $this->getUrl());
+            $result = (bool)$this->runProcess('lftp ' . $this->getUrl());
         } catch (LftpException $e) {
             $result = false;
         }

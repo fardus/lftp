@@ -14,9 +14,6 @@ use Fardus\Lftp\Exception\LftpException;
  */
 class Lftp extends Connection
 {
-    const REGEX_LS_LINE = '#(?<right>[-rwx]+) +([\d ]+ +[\d]+) +(?<size>[\d]+) (?<date>[a-zA-Z]{3}.*[\d]+) (?<file>.*)$#i';
-
-
     /**
      * @var string
      */
@@ -26,20 +23,6 @@ class Lftp extends Connection
      * @var string
      */
     protected $in;
-
-    /**
-     * @param string $command
-     * @return string
-     * @throws LftpException
-     */
-    public function runCommand( $command )
-    {
-        if (!empty($this->in)) {
-            $command = sprintf('cd %s; %s', escapeshellarg($this->in), $command);
-        }
-
-        return parent::runCommand($command);
-    }
 
     /**
      * @return string
@@ -69,31 +52,25 @@ class Lftp extends Connection
         return $this;
     }
 
-    protected function getUrl($directory = null)
-    {
-        $directory = !empty($directory) ? $directory : $this->directory;
-
-        return parent::getUrl($directory);
-    }
-
     /**
      * @param null|string $pattern
      * @param null|int $maxResult
+     * @param bool $useCache
      * @return array
      * @throws LftpException
      */
-    public function files($pattern = null, $maxResult = 1, $useCache = false)
+    public function files( $pattern = null, $maxResult = 1, $useCache = false )
     {
-        $list = array();
-        $function = $useCache ? 'ls' : 'rels';
-        $output = $this->runCommand(sprintf('%s -U %s | head -%d', $function, $pattern, $maxResult));
+        $list     = array();
+        $function = $useCache ? 'nlist' : 'renlist';
+        $output   = $this->runCommand(sprintf('%s -U %s | head -%d', $function, $pattern, $maxResult));
 
-        if(!empty($output)) {
+        if (!empty($output)) {
             $result = explode("\n", $output);
             foreach ($result as $item) {
                 $item = trim($item);
                 if (!empty($item)) {
-                    $list[] = preg_replace(self::REGEX_LS_LINE, '$5', $item);
+                    $list[] = $item;
                 }
             }
         }
@@ -102,11 +79,25 @@ class Lftp extends Connection
     }
 
     /**
+     * @param string $command
+     * @return string
+     * @throws LftpException
+     */
+    public function runCommand( $command )
+    {
+        if (!empty($this->in)) {
+            $command = sprintf('cd %s; %s', escapeshellarg($this->in), $command);
+        }
+
+        return parent::runCommand($command);
+    }
+
+    /**
      * @param $pattern
      * @return bool
      * @throws LftpException
      */
-    public function has( $pattern = '.')
+    public function has( $pattern = '.' )
     {
         $result = $this->runCommand(sprintf('rels -alU %s', $pattern));
         return !empty($result);
@@ -118,10 +109,10 @@ class Lftp extends Connection
      * @return string
      * @throws LftpException
      */
-    public function get( $file, $delete = false)
+    public function get( $file, $delete = false )
     {
         $optDelete = $delete ? '-E' : null;
-        $result = $this->runCommand(sprintf('mget %s %s', $optDelete, escapeshellarg($file)));
+        $result    = $this->runCommand(sprintf('mget %s %s', $optDelete, escapeshellarg($file)));
         return !empty($result);
     }
 
@@ -132,14 +123,14 @@ class Lftp extends Connection
      */
     public function read( $file )
     {
-        return $this->runCommand('cat '.escapeshellarg($file));
+        return $this->runCommand('cat ' . escapeshellarg($file));
     }
 
     /**
      * @param $file
      * @return string
      */
-    public function rm( $file)
+    public function rm( $file )
     {
         try {
             $result = $this->runCommand('rm -rf ' . escapeshellarg($file));
@@ -148,6 +139,13 @@ class Lftp extends Connection
         }
 
         return !empty($result);
+    }
+
+    protected function getUrl( $directory = null )
+    {
+        $directory = !empty($directory) ? $directory : $this->directory;
+
+        return parent::getUrl($directory);
     }
 
 }
